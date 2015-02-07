@@ -1,7 +1,7 @@
 describe('Appending new realtime data.', function(){
 	var charts;
 	beforeEach(function(){
-		charts = new Charts({
+		charts = Charts.create({
 			buffer:3,
 			width: 100,
 			height:100
@@ -19,7 +19,7 @@ describe('Appending new realtime data.', function(){
 
 	it('Initialize normalization.', function(){
 		var height = 100;
-		charts = new Charts({buffer:3, width:100, height:height});
+		charts = Charts.create({buffer:3, width:100, height:height});
 		var initializedNormals = charts.initializeNormalization({ AAPL:[] });
 		var aapl = initializedNormals.AAPL;
 		var price = 0;	
@@ -87,7 +87,7 @@ describe('Appending new realtime data.', function(){
 	_(expectations).each(function(exp){
 		describe('When appending '+exp.qty+' values.', function(){
 			describe('Should fill the other slots with prices=0.', function(){
-				charts = new Charts({
+				charts = Charts.create({
 					buffer:3,
 					width: 100,
 					height:100

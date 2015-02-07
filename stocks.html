@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>	
+	<title>Hello Charts</title>
+
+	<script src="lib/jquery-1.11.1.min.js"></script>    
+	<script src="charts.js"></script>
+
+	<script src="lib/underscore.js"></script>
+</head>
+<body>
+
+<h1>Stock prices</h1>
+<table>
+	<thead>
+		<tr>
+			<th>Code</th>
+			<th>Price</th>
+			<th>Time</th>
+	</thead>
+	<tbody id="price"></tbody>
+</table>
+<p class="new">
+	Code: <input type="text" class="code">
+	Price: <input type="text" class="price">
+	<button class="add">Add</button>
+	<button class="remove-all">Remove All</button>
+</p>
+
+<svg id="svg-chart" viewBox="0 0 1200 300" version="1.1"
+  xmlns="http://www.w3.org/2000/svg">
+</svg>
+
+<div id="container" style="height: 400px; min-width: 310px"></div>
+
+<script type="text/javascript">
+
+// Render price data from server into HTML, registered as callback
+// when subscribing to price topic
+function renderPrice() {
+  var prices = [
+	{time: new Date(), close: 100*Math.random(), id: 1},
+	{time: new Date(), close: 50*Math.random(), id:2}
+  ];
+  $('#price').empty();
+  for(var i in prices) {
+    var price = prices[i];
+
+    chart.append(price.time,price.close, price.id).render();
+    
+    $('#price').append(
+      $('<tr>').append(
+        $('<td>').html(price.id),
+        $('<td>').html(price.close.toFixed(2)),
+        $('<td>').html(price.time)
+      )
+    );
+  }
+  
+}
+
+var intervalID = setInterval(renderPrice, 1000);
+
+// Register handler for add button
+$(document).ready(function() {
+  $('.add').click(function(e){
+    e.preventDefault();
+    //TODO: here will go the code to add a new stock 
+    return false;
+  });
+});
+
+// Register handler for remove all button
+$(document).ready(function() {
+  $('.remove-all').click(function(e) {
+    e.preventDefault();
+    //TODO: here will go the code that remove all the actual stocks
+    return false;
+  });
+});
+
+$(document).ready(function(){
+	window.chart = new Charts({
+		svg: document.getElementById('svg-chart')
+	});
+});
+
+	
+</script>
+
+
+</body>
+</html>

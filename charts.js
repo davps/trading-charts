@@ -7,12 +7,14 @@ var chart = {
 	height: 300,
 	buffer: 100,
 	series: {},
-	append : function(time, price, stock){
+	getSerie: function(stock){
 		if(!this.series[stock]){
 			this.series[stock] = [];
-	 	}
-		this.series[stock].push({time:time, price:price});
-	
+		}
+		return this.series[stock];
+	},
+	append: function(time, price, stock){
+		this.getSerie(stock).push({time:time, price:price});
 		return this;
 	},
 
@@ -91,6 +93,18 @@ var chart = {
 
 	toSvgYAxis : function(y){
 		return this.height - y;
+	},
+
+	createRandomColor: function(){
+		var randomInt = function(min, max){
+			var min = 0, max = 256;
+			var val = Math.floor(Math.random() * (max - min + 1) + min);
+			return val.toString(16);
+		};
+		var r = randomInt();
+		var g = randomInt();
+		var b = randomInt();
+		return r+g+b;
 	},
 
 	render : function(){

@@ -38,10 +38,29 @@
 // Render price data from server into HTML, registered as callback
 // when subscribing to price topic
 function renderPrice() {
+  var s = chart.series;
+  var previousVal1 = s[1] ? s[1][ s[1].length-1 ].price : 100;
+  var previousVal2 = s[2] ? s[2][ s[2].length-1 ].price : 300;
+  var previousVal3 = s[3] ? s[3][ s[3].length-1 ].price : 700;
+
   var prices = [
-	{time: new Date(), close: 100*Math.random(), id: 1},
-	{time: new Date(), close: 50*Math.random(), id:2}
+	{
+	   time: new Date(), 
+	   close: (previousVal1)  + 5*Math.random()*Math.cos(Math.random()*3.14), 
+	   id: 1
+	},
+	{
+	   time: new Date(), 
+	   close: (previousVal2) + 2*Math.random()*Math.cos(Math.random()*3.14), 
+	   id:2
+	},
+	{
+	   time: new Date(), 
+	   close: (previousVal3) + 1*Math.random()*Math.cos(Math.random()*3.14), 
+	   id:3
+	}
   ];
+  //console.log(prices[0].close, prices[1].close, prices[2].close);
   $('#price').empty();
   for(var i in prices) {
     var price = prices[i];
@@ -59,7 +78,7 @@ function renderPrice() {
   
 }
 
-var intervalID = setInterval(renderPrice, 1000);
+var intervalID = setInterval(renderPrice, 70);
 
 // Register handler for add button
 $(document).ready(function() {
@@ -80,7 +99,7 @@ $(document).ready(function() {
 });
 
 $(document).ready(function(){
-	window.chart = new Charts({
+	window.chart = Charts.create({
 		svg: document.getElementById('svg-chart')
 	});
 });

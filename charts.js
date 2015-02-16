@@ -7,14 +7,31 @@ var chart = {
 	height: 300,
 	buffer: 100,
 	series: {},
+	seriesColor: [],
+	
+	/**
+	 * Given a stock ID, return the values of the stock over the time
+	 */
 	getSerie: function(stock){
 		if(!this.series[stock]){
 			this.series[stock] = [];
 		}
 		return this.series[stock];
 	},
+
+	/**
+	 * Append a stock value to the serie of that stock
+	 */
 	append: function(time, price, stock){
+		if( _(this.seriesColor).where({stock:stock}).length === 0){
+			this.seriesColor.push({
+				color: this.createRandomColor(),
+				stock: stock
+			});
+		}
+
 		this.getSerie(stock).push({time:time, price:price});
+
 		return this;
 	},
 
@@ -66,29 +83,7 @@ var chart = {
 			}, this);
 		}, this);
 
-		/*
-		_(series).each(function(serie, stock){
-			var minTime = _.min(_(serie).pluck('time'));
-			var maxTime = _.max(_(serie).pluck('time'));AAPe
-			var minPrice = _.min(_(serie).pluck('price'));
-			var maxPrice = _.max(_(serie).pluck('price'));
-			var length = serie.length;
-			_(serie).each(function(item, index){
-				if(!normalized[stock]){
-					normalized[stock] = [];
-				}
-				if( !((length - this.buffer) > index) ){
-					normalized[stock].push({
-						time: this.width - (item.time - minTime) / (maxTime - minTime) * this.width,
-						price: this.height - (item.price - minPrice) / (maxPrice - minPrice) * this.height,
-						ref: item
-					});
-				}
-			}, this);	
-		}, this);
-		*/
-		return normalized;
-		
+		return normalized;		
 	},
 
 	toSvgYAxis : function(y){
@@ -97,14 +92,20 @@ var chart = {
 
 	createRandomColor: function(){
 		var randomInt = function(min, max){
-			var min = 0, max = 256;
+			var min = 0, max = 255;
 			var val = Math.floor(Math.random() * (max - min + 1) + min);
-			return val.toString(16);
+			var hex;
+			if(val < 16){
+				hex = '0' + val.toString(16);
+			}else{
+				hex = val.toString(16);				
+			}
+			return hex;
 		};
 		var r = randomInt();
 		var g = randomInt();
 		var b = randomInt();
-		return r+g+b;
+		return '#'+r+g+b;
 	},
 
 	render : function(){
@@ -112,19 +113,38 @@ var chart = {
 
 		$(this.svg).children().remove();
 
-		_(normalized).each(function(serie){
-			_(serie).each(function(item, stock){
-				this.renderCircle(item.x, this.toSvgYAxis(item.y), stock);
+		_(normalized).each(function(serie, stock){
+			var color = _(this.seriesColor).where({stock:stock})[0].color;
+			var prevItem;
+			_(serie).each(function(item, index){
+				if(prevItem){
+					this.renderLine(prevItem.x, this.toSvgYAxis(prevItem.y), item.x, this.toSvgYAxis(item.y), stock, color);
+				}
+				this.renderCircle(item.x, this.toSvgYAxis(item.y), index, stock, color);
+				prevItem = item;
 			}, this);
 		}, this);
 	},
 
-	renderCircle : function(x, y, name){
+	renderLine : function (x1, y1, x2, y2, stock, color) {
+		var ns = 'http://www.w3.org/2000/svg';
+		var line = document.createElementNS(ns, 'line');
+		line.setAttributeNS(null, 'x1', x1);
+		line.setAttributeNS(null, 'y1', y1);
+		line.setAttributeNS(null, 'x2', x2);
+		line.setAttributeNS(null, 'y2', y2);
+		line.setAttributeNS(null, 'class', stock);
+		line.setAttributeNS(null, 'stroke', color);
+		this.svg.appendChild(line);
+	},
+
+	renderCircle : function(x, y, index, stock, color){
 		var ns = 'http://www.w3.org/2000/svg';
 		var circle = document.createElementNS(ns, 'circle');
 		circle.setAttributeNS(null, 'cx', x);
 		circle.setAttributeNS(null, 'cy', y);
-		////circle.setAttributeNS(null, 'class', stock);
+		circle.setAttributeNS(null, 'class', stock);
+		circle.setAttributeNS(null, 'fill', color);
 		circle.setAttributeNS(null, 'r', this.r);
 		this.svg.appendChild(circle);
 	}

@@ -2,14 +2,11 @@
 <html>
 <head>	
 	<title>Hello Charts</title>
-
 	<script src="lib/jquery-1.11.1.min.js"></script>    
 	<script src="charts.js"></script>
-
 	<script src="lib/underscore.js"></script>
 </head>
 <body>
-
 <h1>Stock prices</h1>
 <table>
 	<thead>
@@ -25,6 +22,12 @@
 	Price: <input type="text" class="price">
 	<button class="add">Add</button>
 	<button class="remove-all">Remove All</button>
+</p>
+<p>
+	<p> Time of percentage=0% 
+		<input type="text" class="percentage-start">
+		<button class="save-percentage-start">Save</button>
+	</p>
 </p>
 
 <svg id="svg-chart" viewBox="0 0 1200 300" version="1.1"
@@ -47,17 +50,17 @@ function renderPrice() {
 	{
 	   time: new Date(), 
 	   close: (previousVal1)  + 5*Math.random()*Math.cos(Math.random()*3.14), 
-	   id: 1
+	   id: 'AAPL'
 	},
 	{
 	   time: new Date(), 
 	   close: (previousVal2) + 2*Math.random()*Math.cos(Math.random()*3.14), 
-	   id:2
+	   id:'IBM'
 	},
 	{
 	   time: new Date(), 
 	   close: (previousVal3) + 1*Math.random()*Math.cos(Math.random()*3.14), 
-	   id:3
+	   id:'TSLA'
 	}
   ];
   //console.log(prices[0].close, prices[1].close, prices[2].close);
@@ -78,7 +81,7 @@ function renderPrice() {
   
 }
 
-var intervalID = setInterval(renderPrice, 70);
+var intervalID = setInterval(renderPrice, 100);
 
 // Register handler for add button
 $(document).ready(function() {
@@ -100,10 +103,10 @@ $(document).ready(function() {
 
 $(document).ready(function(){
 	window.chart = Charts.create({
-		svg: document.getElementById('svg-chart')
+		svg: document.getElementById('svg-chart'),
+		buffer:200
 	});
 });
-
 	
 </script>
 
